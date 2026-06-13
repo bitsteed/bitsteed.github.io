@@ -1,0 +1,29 @@
+[
+  {
+    "id": "vid_001",
+    "title": "Breaking Tech News: The Future of AI in 2026",
+    "category": "Technology",
+    "youtube_url": "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+    "thumbnail": "https://img.youtube.com/vi/dQw4w9WgXcQ/mqdefault.jpg",
+    "summary": "Explore the latest breakthroughs in artificial intelligence and how they are reshaping industries worldwide.",
+    "date": "June 13, 2026"
+  },
+  {
+    "id": "vid_002",
+    "title": "Global Market Updates & Economic Outlook",
+    "category": "Business",
+    "youtube_url": "https://www.youtube.com/watch?v=ScMzIvxBSi4",
+    "thumbnail": "https://img.youtube.com/vi/ScMzIvxBSi4/mqdefault.jpg",
+    "summary": "A deep dive into the current financial trends, stock market shifts, and economic predictions for the upcoming quarter.",
+    "date": "June 12, 2026"
+  },
+  {
+    "id": "vid_003",
+    "title": "Exploring the World's Most Sustainable Cities",
+    "category": "World",
+    "youtube_url": "https://www.youtube.com/watch?v=kJQP7kiw5Fk",
+    "thumbnail": "https://img.youtube.com/vi/kJQP7kiw5Fk/mqdefault.jpg",
+    "summary": "From green architecture to zero-waste initiatives, take a look at the cities leading the charge in sustainability.",
+    "date": "June 10, 2026"
+  }
+]
