@@ -61,52 +61,69 @@
 
     <!-- LOGIC SYSTEM PROCESSING ENGINE -->
     <script>
+        // Fix: Improved ID parser that cleanly handles full URLs, Shorts, and raw 11-char IDs
         function extractCleanYouTubeId(urlString) {
             if (!urlString) return null;
+            
+            // Trim whitespace first
+            const cleanUrl = urlString.trim();
+            
+            // If it's already just an 11-character alpha-numeric ID, return it directly
+            if (cleanUrl.length === 11 && !cleanUrl.includes('/') && !cleanUrl.includes('.')) {
+                return cleanUrl;
+            }
+            
             const patterns = [
                 /youtube\.com\/watch\?v=([^&#\?]+)/,
                 /youtu\.be\/([^&#\?]+)/,
-                /youtube\.com\/shorts\/([^&#\?]+)/
+                /youtube\.com\/shorts\/([^&#\?]+)/,
+                /youtube\.com\/embed\/([^&#\?]+)/
             ];
+            
             for (let regex of patterns) {
-                const matches = urlString.trim().match(regex);
+                const matches = cleanUrl.match(regex);
                 if (matches && matches[1]) return matches[1];
             }
             return null;
         }
 
         async function initDetailPage() {
-            // 1. Read parameters extracted out from dynamic URL paths (?v=ID)
             const urlParams = new URLSearchParams(window.location.search);
             const targetVideoId = urlParams.get('v');
 
             if (!targetVideoId) {
-                displayHalt("Invalid Address Context: No video identifier provided.");
+                displayHalt("Invalid Address Context: No video identifier provided in URL (?v=vid_001).");
                 return;
             }
 
             try {
-                // 2. Fetch dataset indices out from remote data target arrays
+                // Fetch dataset from your github repository
                 const response = await fetch('https://bitsteed.github.io/videos.json', { cache: "no-store" });
                 if (!response.ok) throw new Error("Could not access data storage nodes.");
                 
                 const videos = await response.json();
+                
+                // Matches the '?v=' parameter against the "id" key in your JSON file
                 const matchedRecord = videos.find(v => v.id === targetVideoId);
 
                 if (!matchedRecord) {
-                    throw new Error("The requested video report could not be found in our network registry.");
+                    throw new Error(`The requested video identifier "${targetVideoId}" could not be found in our network registry.`);
                 }
 
-                // 3. Process the dynamic secure YouTube parameters matching active origins
                 const rawYoutubeId = extractCleanYouTubeId(matchedRecord.youtube_url);
-                const localWebOrigin = window.location.origin;
+                
+                if (!rawYoutubeId) {
+                    throw new Error("Unable to extract a valid 11-character YouTube video stream code.");
+                }
 
-                // Bind elements data components mappings directly to DOM
-                document.getElementById('player-frame').src = `https://www.youtube.com/embed/${rawYoutubeId}?autoplay=1&rel=0&origin=${encodeURIComponent(localWebOrigin)}`;
-                document.getElementById('detail-category').innerText = matchedRecord.category;
-                document.getElementById('detail-date').innerText = matchedRecord.date;
+                // Fix: Removed the restrictive &origin parameter to allow seamless local testing (localhost / file://)
+                document.getElementById('player-frame').src = `https://www.youtube.com/embed/${rawYoutubeId}?autoplay=1&rel=0`;
+                
+                // Bind element data components directly to DOM
+                document.getElementById('detail-category').innerText = matchedRecord.category || 'News';
+                document.getElementById('detail-date').innerText = matchedRecord.date || '';
                 document.getElementById('detail-title').innerText = matchedRecord.title;
-                document.getElementById('detail-summary').innerText = matchedRecord.summary;
+                document.getElementById('detail-summary').innerText = matchedRecord.summary || matchedRecord.description || '';
                 
                 document.title = `${matchedRecord.title} - BitSteed News`;
 
